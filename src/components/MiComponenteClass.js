@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Text, View } from 'react-native';
+import estilos from '../styles/estilos';
 
 //Heredar de la clase Componet
 export default class MiComponenteClass extends Component {
@@ -21,7 +22,9 @@ export class OtraClase extends Component {
 	render() {
 		return (
 			<View>
-				<Text>Desde otra clase</Text>
+				<Text style={estilos.subtitulos}>
+					Desde otra clase
+				</Text>
 			</View>
 		);
 	}

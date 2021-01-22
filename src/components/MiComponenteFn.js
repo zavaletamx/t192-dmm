@@ -8,6 +8,7 @@ Lo minimo para crear un componente:
 */
 import React from 'react';
 import { Button, Text, View } from 'react-native';
+import estilos from './../styles/estilos';
 
 /*
 Solo un componente default por archivo
@@ -25,7 +26,9 @@ export default function MiComponenteFn() {
 	return (
 		<>
 			<View>
-				<Text>Mi ComponenteFn</Text>
+				<Text style={estilos.subtitulos}>
+					Mi ComponenteFn
+				</Text>
 			</View>
 			<View>
 				<Button title='Boton 1' />
@@ -37,7 +40,9 @@ export default function MiComponenteFn() {
 export function OtroComponente() {
 	return (
 		<View>
-			<Text>Otro Componente</Text>
+			<Text style={estilos.subtitulos}>
+				Otro Componente
+			</Text>
 		</View>
 	);
 }

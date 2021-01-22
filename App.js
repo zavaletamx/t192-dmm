@@ -1,6 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+	Platform,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
+import Hola from './src/components/Hola';
+/*
+Platform es una librería de React que te permite  identificar en que plataforma está
+corriendo el código fuente y definir algun cambio único para cada plataforma
+*/
+
 import MiComponenteAF, {
 	OtraAF,
 } from './src/components/MiComponenteAF';
@@ -39,7 +51,7 @@ import MiComponenteFn, {
  * Componente que genera espacios
  * por medio de vistas
  */
-const Espacios = () => {
+export const Espacios = () => {
 	return (
 		<>
 			<View>
@@ -60,27 +72,65 @@ const Espacios = () => {
 
 export default function App() {
 	return (
-		<View style={styles.container}>
-			<Text>Hola Mundo</Text>
-			{/*Agregamos nuestro componente*/}
+		<ScrollView>
+			<View style={styles.container}>
+				{/*
+            margin-top marginTop
+            margin-left marginLeft
+            text-size textSize
+            */}
+				<Text
+					style={{
+						paddingTop:
+							Platform.OS === 'ios' ? 50 : 20,
+						fontSize: 30,
+						fontWeight: 'bold',
+						/*Azul = Android Blanco = Apple*/
+						color:
+							Platform.OS === 'ios'
+								? '#fff'
+								: '#0000FF',
+						/*Rojo = Android Negro = Apple*/
+						backgroundColor:
+							Platform.OS === 'android'
+								? '#FF0000'
+								: '#000',
+						padding: 20,
+						width: '100%',
+						textAlign: 'center',
+						marginBottom: 30,
+					}}
+				>
+					Hola Mundo
+				</Text>
 
-			<Espacios />
+				<Text style={styles.subtitulos}>
+					Subtítulo
+				</Text>
+				{/*Agregamos nuestro componente*/}
 
-			<MiComponenteFn />
-			<OtroComponente />
+				<Espacios />
 
-			<Espacios />
+				<MiComponenteFn />
+				<OtroComponente />
 
-			<MiComponenteClass />
-			<OtraClase />
+				<Espacios />
 
-			<Espacios />
+				<MiComponenteClass />
+				<OtraClase />
 
-			<MiComponenteAF />
-			<OtraAF />
+				<Espacios />
 
-			<StatusBar style='auto' />
-		</View>
+				<MiComponenteAF />
+				<OtraAF />
+
+				<Espacios />
+
+				<Hola />
+
+				<StatusBar style='auto' />
+			</View>
+		</ScrollView>
 	);
 }
 
@@ -90,5 +140,14 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	subtitulos: {
+		fontSize: 15,
+		fontWeight: 'bold',
+		color: '#FFF',
+		backgroundColor: '#000',
+		padding: 10,
+		width: '100%',
+		textAlign: 'center',
 	},
 });
