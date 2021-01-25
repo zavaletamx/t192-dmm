@@ -6,7 +6,7 @@ import {
 	TextInput,
 } from 'react-native';
 import estilos from '../styles/estilos';
-import { Espacios } from './../../App';
+import { Espacios } from '../../App.back.intro_componentes';
 
 const Hola = () => {
 	return (

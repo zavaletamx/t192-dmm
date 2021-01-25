@@ -1,153 +1,115 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { ScrollView, Text, View } from 'react-native';
+
+/** Agregamos librerías de íconos */
 import {
-	Platform,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
-import Hola from './src/components/Hola';
-/*
-Platform es una librería de React que te permite  identificar en que plataforma está
-corriendo el código fuente y definir algun cambio único para cada plataforma
-*/
-
-import MiComponenteAF, {
-	OtraAF,
-} from './src/components/MiComponenteAF';
-import MiComponenteClass, {
-	OtraClase,
-} from './src/components/MiComponenteClass';
-
-/*
-Componentes  en React
-Simple Components 
-Es una sección de código (UI) (Fragment, item)
-
-Screen Components 
-UI completa, presentación de la aplicación
-
-Functional Components
-Sección de código que se conectan a una librería 
-o generan alguna funcionalidad
-
-Los componentes pueden crearse de 3 formas dsitintas
-    + Constantes (Arrow Function)
-    + Funciones
-    + Clases
-*/
-
-//Importamos nuestro componente
-//import MODULO* from './RUTA_RELATIVA'
-//* Los modulo puedne tener export default o no
-//Si se trata del expor default, solo nombramos al componente
-//Si no es export default, indicamos entre llaves
-import MiComponenteFn, {
-	OtroComponente,
-} from './src/components/MiComponenteFn';
+	Feather,
+	Zocial,
+	Ionicons,
+} from '@expo/vector-icons';
 
 /**
- * Componente que genera espacios
- * por medio de vistas
+ * El diseño de UI en React usa los principios del desarrollo web
+ * Entre ellos el manejo de JSX, los estilos tambien están inspirados
+ * en el entorno web
+ *
+ * Flex
  */
-export const Espacios = () => {
+
+const App = () => {
 	return (
-		<>
-			<View>
-				{/** Espacio en blanco */}
-				<Text>{'    '}</Text>
+		<View style={{ backgroundColor: '#000', flex: 1 }}>
+			<View
+				style={{
+					backgroundColor: '#F6D8AE',
+					flex: 8,
+					/** Centrado horizontal */
+					alignItems: 'center',
+					/** Centrado vertical */
+					justifyContent: 'space-around',
+				}}
+			>
+				<Text>
+					<Feather
+						name='user'
+						size={28}
+						color='#083D77'
+					/>
+					{'  '}
+					Raúl Zavaleta
+				</Text>
+				<Text>
+					<Zocial
+						name='call'
+						size={28}
+						color='#083D77'
+					/>
+					{'  '}
+					(442) 204 8329
+				</Text>
+				<Text>
+					<Ionicons
+						name='md-mail-sharp'
+						color='#083D77'
+						size={28}
+					/>
+					{'  '}
+					raul.zavaletazea@gmail.com
+				</Text>
 			</View>
-			<View>
-				{/** Espacio en blanco */}
-				<Text>{'    '}</Text>
+
+			<View
+				style={{
+					flex: 2,
+					flexDirection: 'row',
+				}}
+			>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: '#DA4167',
+					}}
+				/>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: '#2E4057',
+					}}
+				/>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: '#fff',
+					}}
+				>
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: '#fff',
+						}}
+					/>
+					<View
+						style={{
+							flex: 1,
+							backgroundColor: '#000',
+						}}
+					/>
+				</View>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: '#083D77',
+					}}
+				/>
+				<View
+					style={{
+						flex: 1,
+						backgroundColor: '#6E2594',
+					}}
+				/>
 			</View>
-			<View>
-				{/** Espacio en blanco */}
-				<Text>{'    '}</Text>
-			</View>
-		</>
+		</View>
 	);
 };
 
-export default function App() {
-	return (
-		<ScrollView>
-			<View style={styles.container}>
-				{/*
-            margin-top marginTop
-            margin-left marginLeft
-            text-size textSize
-            */}
-				<Text
-					style={{
-						paddingTop:
-							Platform.OS === 'ios' ? 50 : 20,
-						fontSize: 30,
-						fontWeight: 'bold',
-						/*Azul = Android Blanco = Apple*/
-						color:
-							Platform.OS === 'ios'
-								? '#fff'
-								: '#0000FF',
-						/*Rojo = Android Negro = Apple*/
-						backgroundColor:
-							Platform.OS === 'android'
-								? '#FF0000'
-								: '#000',
-						padding: 20,
-						width: '100%',
-						textAlign: 'center',
-						marginBottom: 30,
-					}}
-				>
-					Hola Mundo
-				</Text>
-
-				<Text style={styles.subtitulos}>
-					Subtítulo
-				</Text>
-				{/*Agregamos nuestro componente*/}
-
-				<Espacios />
-
-				<MiComponenteFn />
-				<OtroComponente />
-
-				<Espacios />
-
-				<MiComponenteClass />
-				<OtraClase />
-
-				<Espacios />
-
-				<MiComponenteAF />
-				<OtraAF />
-
-				<Espacios />
-
-				<Hola />
-
-				<StatusBar style='auto' />
-			</View>
-		</ScrollView>
-	);
-}
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	subtitulos: {
-		fontSize: 15,
-		fontWeight: 'bold',
-		color: '#FFF',
-		backgroundColor: '#000',
-		padding: 10,
-		width: '100%',
-		textAlign: 'center',
-	},
-});
+export default App;
