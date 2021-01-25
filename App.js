@@ -1,115 +1,104 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
-
-/** Agregamos librerías de íconos */
 import {
-	Feather,
-	Zocial,
-	Ionicons,
-} from '@expo/vector-icons';
-
-/**
- * El diseño de UI en React usa los principios del desarrollo web
- * Entre ellos el manejo de JSX, los estilos tambien están inspirados
- * en el entorno web
- *
- * Flex
- */
+	Image,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
+import { Zocial } from '@expo/vector-icons';
 
 const App = () => {
 	return (
-		<View style={{ backgroundColor: '#000', flex: 1 }}>
+		<View style={estilos.contendor}>
 			<View
-				style={{
-					backgroundColor: '#F6D8AE',
-					flex: 8,
-					/** Centrado horizontal */
-					alignItems: 'center',
-					/** Centrado vertical */
-					justifyContent: 'space-around',
-				}}
+				style={[
+					estilos.contendor,
+					{
+						backgroundColor: '#424499',
+						alignItems: 'center',
+						justifyContent: 'center',
+					},
+				]}
 			>
-				<Text>
-					<Feather
-						name='user'
-						size={28}
-						color='#083D77'
-					/>
-					{'  '}
-					Raúl Zavaleta
-				</Text>
-				<Text>
-					<Zocial
-						name='call'
-						size={28}
-						color='#083D77'
-					/>
-					{'  '}
-					(442) 204 8329
-				</Text>
-				<Text>
-					<Ionicons
-						name='md-mail-sharp'
-						color='#083D77'
-						size={28}
-					/>
-					{'  '}
-					raul.zavaletazea@gmail.com
-				</Text>
-			</View>
+				{/**
+				 * Ejemplo d eimagen con recurso local
+				 * source={require('./assets/favicon.png')}
+				 * */}
+				<Image
+					source={{
+						uri:
+							'https://i.pinimg.com/originals/87/06/af/8706af8cd8bc876fe3d5da0d3fc15cd3.png',
+					}}
+					style={{
+						width: 150,
+						height: 150,
+						resizeMode: 'center',
+						borderRadius: 150,
+					}}
+				/>
 
-			<View
-				style={{
-					flex: 2,
-					flexDirection: 'row',
-				}}
-			>
-				<View
+				<Text
 					style={{
-						flex: 1,
-						backgroundColor: '#DA4167',
-					}}
-				/>
-				<View
-					style={{
-						flex: 1,
-						backgroundColor: '#2E4057',
-					}}
-				/>
-				<View
-					style={{
-						flex: 1,
-						backgroundColor: '#fff',
+						fontSize: 24,
+						marginVertical: 20,
+						color: '#FDF0FF',
+						textDecorationLine: 'underline',
 					}}
 				>
-					<View
-						style={{
-							flex: 1,
-							backgroundColor: '#fff',
-						}}
-					/>
-					<View
-						style={{
-							flex: 1,
-							backgroundColor: '#000',
-						}}
-					/>
+					Profe y Desarrollador
+				</Text>
+
+				<View style={estilos.contenedorContacto}>
+					<Text
+						style={[
+							estilos.contendor,
+							estilos.textoContacto,
+						]}
+					>
+						<Zocial name='email' size={16} />
+						{'  '}
+						raul@zavaletazea.dev
+					</Text>
+					<Text
+						style={[
+							estilos.contendor,
+							estilos.textoContacto,
+							{ textAlign: 'right' },
+						]}
+					>
+						<Zocial name='call' size='16' />
+						{'  '}
+						204 8329
+					</Text>
 				</View>
-				<View
-					style={{
-						flex: 1,
-						backgroundColor: '#083D77',
-					}}
-				/>
-				<View
-					style={{
-						flex: 1,
-						backgroundColor: '#6E2594',
-					}}
-				/>
 			</View>
+
+			{/**SECCION INFERIOR */}
+			<View
+				style={[
+					estilos.contendor,
+					estilos.contendorInf,
+				]}
+			></View>
 		</View>
 	);
 };
+
+const estilos = StyleSheet.create({
+	contendor: {
+		flex: 1,
+	},
+	contendorInf: {
+		backgroundColor: '#FDF0FF',
+	},
+	contenedorContacto: {
+		flexDirection: 'row',
+		width: '90%',
+	},
+	textoContacto: {
+		color: '#FDF0FF',
+		fontSize: 16,
+	},
+});
 
 export default App;
