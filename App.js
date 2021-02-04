@@ -2,6 +2,7 @@ import React from 'react';
 
 import Login from './src/screens/Login';
 import Inicio from './src/screens/Inicio';
+import Registro from './src/screens/Registro';
 
 /**
  * Para crear un esquema de navegación en React, necesitamos:
@@ -40,6 +41,11 @@ export default function App() {
 				<Stack.Screen
 					name='Inicio'
 					component={Inicio}
+				/>
+
+				<Stack.Screen
+					name='Registro'
+					component={Registro}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

@@ -5,7 +5,6 @@ import { Button, Text, View } from 'react-native';
  * que comparte el componente padre conmigo
  */
 const Inicio = (props) => {
-	console.log(props);
 	return (
 		<View
 			style={{
@@ -14,7 +13,6 @@ const Inicio = (props) => {
 				justifyContent: 'center',
 			}}
 		>
-			<Text>En Inicio.js</Text>
 			<Button
 				title='Login'
 				onPress={() => {
@@ -23,6 +21,13 @@ const Inicio = (props) => {
 					 * navigate('_SOBRENOMBRE_');
 					 */
 					props.navigation.navigate('Login');
+				}}
+			/>
+
+			<Button
+				title='Registro'
+				onPress={() => {
+					props.navigation.navigate('Registro');
 				}}
 			/>
 		</View>
