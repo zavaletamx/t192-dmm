@@ -29,4 +29,17 @@ export default StyleSheet.create({
 		backgroundColor: '#585858',
 		borderRadius: 200,
 	},
+	contenedorImgCircular: {
+		width: 200,
+		height: 200,
+		overflow: 'hidden',
+		borderRadius: 100,
+	},
+	row: {
+		flexDirection: 'row',
+		width: '95%',
+	},
+	col: {
+		flex: 1,
+	},
 });
