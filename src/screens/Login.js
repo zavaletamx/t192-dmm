@@ -87,12 +87,14 @@ const Login = (props) => {
 		setBtnVisible(false);
 		setTiHab(false);
 
-		//Despues de 4 segundos, habilitar todo
+		//Despues de 1.5 segundos, habilitar todo
+		//y direccionamos a home
 		setTimeout(() => {
 			setAiVisible(false);
 			setBtnVisible(true);
 			setTiHab(true);
-		}, 4000);
+			props.navigation.navigate('Home');
+		}, 1500);
 	};
 
 	const ejemploAlert = () => {

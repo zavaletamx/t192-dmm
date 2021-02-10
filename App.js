@@ -18,6 +18,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 //2.-
 import { createStackNavigator } from '@react-navigation/stack';
+import Home from './src/screens/private/Home';
 
 //2.1.-
 const Stack = createStackNavigator();
@@ -46,6 +47,11 @@ export default function App() {
 				<Stack.Screen
 					name='Registro'
 					component={Registro}
+				/>
+
+				<Stack.Screen
+					name='Home'
+					component={Home}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
