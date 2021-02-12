@@ -24,8 +24,8 @@ const Login = (props) => {
     Para usar un estado utilizamo la libreria useState de React
     const [valor, setValor] = useState(_VALOR_INCIAL_);
     */
-	const [telefono, setTelefono] = useState('');
-	const [pin, setPin] = useState('');
+	const [telefono, setTelefono] = useState('4422048329');
+	const [pin, setPin] = useState('123456');
 	/**
 	 * States para mostrar/ociultar spinner
 	 */
@@ -94,7 +94,7 @@ const Login = (props) => {
 			setBtnVisible(true);
 			setTiHab(true);
 			props.navigation.navigate('Home');
-		}, 1500);
+		}, 500);
 	};
 
 	const ejemploAlert = () => {
