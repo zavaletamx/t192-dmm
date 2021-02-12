@@ -12,6 +12,7 @@ import Inicio from './Inicio';
 import Perfil from './Perfil';
 import Catalogo from './Catalogo';
 import Rentas from './Rentas';
+import Sidebar from './../../components/Sidebar';
 import CerrarSesion from './CerrarSesion';
 
 import { Entypo, AntDesign } from '@expo/vector-icons';
@@ -124,12 +125,14 @@ const Home = (props) => {
 		<Drawer.Navigator
 			initialRouteName='Inicio'
 			drawerType='front'
+			openByDefault={false}
+			drawerContent={() => <Sidebar {...props} />}
 		>
 			{/** Por cada item que necesite en el Drawer
 			 * agrego un Screen
 			 */}
 			<Drawer.Screen
-				name='Inicio'
+				name='InicioUser'
 				component={Inicio}
 			/>
 
