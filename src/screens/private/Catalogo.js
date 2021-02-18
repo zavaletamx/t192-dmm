@@ -1,84 +1,122 @@
 import { useFocusEffect } from '@react-navigation/core';
-import React from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+	FlatList,
+	RefreshControl,
+	View,
+} from 'react-native';
 import Usuario from '../../components/Usuario';
 
 const Catalogo = (props) => {
+	//Estado que guarde el arreglo de objetos de laista de usuarios
+	const [usuarios, setUsuarios] = useState([]);
+	const [rcVisible, setRcVisible] = useState(true);
+
 	useFocusEffect(() => {
-		//Modificamos las opciones del HEader del Stack (padre)
+		//Modificamos las opciones del Header del Stack (padre)
 		props.navigation.dangerouslyGetParent().setOptions({
 			title: 'Catálogo',
 		});
 	});
 
-	const usuarios = [
-		{
-			id: 1,
-			email: 'raul.zavaletazea@gmail.com',
-			first_name: 'Raúl',
-			last_name: 'Zavaleta Zea',
-			avatar:
-				'https://scontent.fqro1-1.fna.fbcdn.net/v/t1.0-9/43951376_10215470951461401_3298900960570507264_n.jpg?_nc_cat=104&ccb=3&_nc_sid=174925&_nc_eui2=AeFWPO2UHwcVmmRqyHWcRVbp0H0Ziktzsc_QfRmKS3Oxz0fwW0JRn5af1jCPOBlLUGA&_nc_ohc=6DFf0P_q0yUAX8vxbTg&_nc_oc=AQmqX5V6-TYt8eKmCFE32qJeKwFFiTpXbMNRqMavhpaBLzDbbyUdZ0D7_VcElXSzPoaMIWwkSSHOUHhUqp_AiatR&_nc_ht=scontent.fqro1-1.fna&oh=2dccb299d033c03fc65436aef0120337&oe=604F5288',
-		},
-		{
-			id: 2,
-			email: 'anai.jua@gmail.com ',
-			first_name: 'Anai',
-			last_name: 'Juez Reyes',
-			avatar:
-				'https://hipertextual.com/files/2019/01/hipertextual-wonder-woman-1984-steve-trevor-regreso-2019873442.jpg',
-		},
-		{
-			id: 3,
-			email: 'raul.zavaletazea@gmail.com',
-			first_name: 'Jaime',
-			last_name: 'Duende',
-			avatar:
-				'https://scontent.fqro1-1.fna.fbcdn.net/v/t1.0-9/43951376_10215470951461401_3298900960570507264_n.jpg?_nc_cat=104&ccb=3&_nc_sid=174925&_nc_eui2=AeFWPO2UHwcVmmRqyHWcRVbp0H0Ziktzsc_QfRmKS3Oxz0fwW0JRn5af1jCPOBlLUGA&_nc_ohc=6DFf0P_q0yUAX8vxbTg&_nc_oc=AQmqX5V6-TYt8eKmCFE32qJeKwFFiTpXbMNRqMavhpaBLzDbbyUdZ0D7_VcElXSzPoaMIWwkSSHOUHhUqp_AiatR&_nc_ht=scontent.fqro1-1.fna&oh=2dccb299d033c03fc65436aef0120337&oe=604F5288',
-		},
-		{
-			id: 4,
-			email: 'anai.jua@gmail.com ',
-			first_name: 'Juan',
-			last_name: 'Gabriel',
-			avatar:
-				'https://hipertextual.com/files/2019/01/hipertextual-wonder-woman-1984-steve-trevor-regreso-2019873442.jpg',
-		},
-		{
-			id: 5,
-			email: 'raul.zavaletazea@gmail.com',
-			first_name: 'José',
-			last_name: 'José',
-			avatar:
-				'https://scontent.fqro1-1.fna.fbcdn.net/v/t1.0-9/43951376_10215470951461401_3298900960570507264_n.jpg?_nc_cat=104&ccb=3&_nc_sid=174925&_nc_eui2=AeFWPO2UHwcVmmRqyHWcRVbp0H0Ziktzsc_QfRmKS3Oxz0fwW0JRn5af1jCPOBlLUGA&_nc_ohc=6DFf0P_q0yUAX8vxbTg&_nc_oc=AQmqX5V6-TYt8eKmCFE32qJeKwFFiTpXbMNRqMavhpaBLzDbbyUdZ0D7_VcElXSzPoaMIWwkSSHOUHhUqp_AiatR&_nc_ht=scontent.fqro1-1.fna&oh=2dccb299d033c03fc65436aef0120337&oe=604F5288',
-		},
-		{
-			id: 6,
-			email: 'anai.jua@gmail.com ',
-			first_name: 'Pedro',
-			last_name: 'Páramo',
-			avatar:
-				'https://hipertextual.com/files/2019/01/hipertextual-wonder-woman-1984-steve-trevor-regreso-2019873442.jpg',
-		},
-	];
+	/**
+	 * JS permite generar peticiones asíncronas (Thread/Hilos)
+	 * Permitiendo optimizar el tiempo de carga y espera de
+	 * dichas funciones
+	 *
+	 * Promise (Promesa)
+	 * Son peticion que esperan regresar algo, pero no es
+	 * seguro qeu así sea
+	 *
+	 * Las promesas tiene la particularidad de poder esperar una
+	 * respuesta sin hacer que todo el programa espere con ellas
+	 *
+	 * Los CallBack son funciones que se ejecutan al finalizar
+	 * cierta acción
+	 *
+	 * Para usar una Promesa/Promise existen dos formas:
+	 * 1.- fetch con callback
+	 * 2.- funciones asíncronas
+	 * 3.- *Instancia de tipo Promise
+	 */
+
+	//Tomar el cotenido del servicio de lista de usuarios
+	//por medio de un callback
+	const getUsuariosCallBack = () => {
+		//Invocar por medio de fetch la url
+		//fetch es el quivalente a ajax.url
+		fetch('https://reqres.in/api/users?per_page=12')
+			//Llamamos al callback despues de ir a la URL
+			.then((response) => response.json())
+			//Esperamos a que se obtenga la respuesta json
+			.then((json) => {
+				//Arreglo para guardar todos los datos de los usuarios
+				const arrUsuarios = [];
+
+				//Recorrer el arreglo data para extraer todos los usuarios
+				json.data.map((usuario) => {
+					//Guardamos cada usuario en mi arreglo
+					arrUsuarios.push({
+						...usuario,
+						edad: 24,
+					});
+				});
+
+				//Pasamos el arreglo de usuarios al estado
+				setUsuarios(arrUsuarios);
+			})
+			.catch((e) => console.error(e));
+	};
+
+	/**
+	 * Creamos una función asíncrona para tomar la lista de usuarios
+	 */
+	// const getUsuariosAsync = async function () { }
+	// async function getUsuariosAsync() { }
+	const getUsuariosAsync = async () => {
+		//La palabra reservada await indica que el contenido de
+		//una variable/constante está en espera de ser recibido
+		//cumple la misma función que await (Pero no es callback)
+		try {
+			const response = await fetch(
+				'https://reqres.in/api/users?per_page=12'
+			);
+			const json = await response.json();
+
+			setUsuarios(json.data);
+			setRcVisible(false);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	/**
+	 * Creamos un efecto que no esté enganchado a ningún componente
+	 * (Solo se ejecute al inicio de la Screen)
+	 */
+	useEffect(() => {
+		//Invocar al servicio de lista de usuarios
+		//getUsuariosCallBack();
+
+		setTimeout(() => {
+			getUsuariosAsync();
+		}, 3000);
+	}, []);
 
 	return (
 		<View style={{ flex: 1 }}>
 			<FlatList
-				style={{
-					marginVertical: 15,
-					marginHorizontal: 20,
-				}}
-				/** El origen de la información a mostrar en la lista */
+				style={{ margin: 15 }}
+				//Indicar el estado de carga
+				refreshControl={
+					<RefreshControl
+						refreshing={rcVisible}
+					/>
+				}
 				data={usuarios}
-				/** El diseño de la presentación de los datos de la lista por cada elemento  */
-
 				renderItem={(item) => (
 					<Usuario datosUsuario={item.item} />
 				)}
-				/** Indicamos el elemento que identifica a
-				 * cada elemento de la colección de datos
-				 */
 				keyExtractor={(item) => item.id.toString()}
 			/>
 		</View>

@@ -8,7 +8,7 @@ import {
 import { FontAwesome5 } from '@expo/vector-icons';
 
 const Usuario = ({ datosUsuario }) => {
-	console.log(datosUsuario);
+	//console.log(datosUsuario);
 
 	/** Object Destructuring */
 	/*
