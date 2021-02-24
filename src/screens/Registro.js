@@ -6,12 +6,11 @@ import {
 	Image,
 	Text,
 	View,
-} from 'react-native';
-import {
-	RotationGestureHandler,
 	TextInput,
-} from 'react-native-gesture-handler';
+} from 'react-native';
+import firebase from './../database/firebase';
 import estilos from '../styles/estilos';
+import get_error from '../helpers/errores_es_mx';
 
 export default class Registro extends Component {
 	/* Para generar estados en una clase, debemos incializar el objeto global state 
@@ -26,13 +25,13 @@ export default class Registro extends Component {
         y aqui debmos guardar todas las variables de estado que sean necesarias
         */
 		this.state = {
-			nombre: '',
-			apellido1: '',
-			apellido2: '',
+			nombre: 'Poi',
+			apellido1: 'Poi',
+			apellido2: 'Poi',
 			fechaNAcimiento: '',
 			telefono: '',
-			email: '',
-			pin: '',
+			email: 'raul.zavaletazea@uteq.edu.mx',
+			pin: '123456',
 			terminos: false,
 			aiVisible: false,
 			btnVisible: true,
@@ -61,15 +60,22 @@ export default class Registro extends Component {
 	 * RENDER
 	 */
 	render() {
-		const validaRegistro = () => {
+		const validaRegistro = async () => {
 			if (this.state.nombre.length < 3) {
-				Alert.alert('ERROR', 'Nombre incorrecto', [
-					{
-						text: 'Corregir',
-						onPress: () =>
-							this.setState({ nombre: '' }),
-					},
-				]);
+				Alert.alert(
+					'ERROR',
+					'Nombre incorrecto',
+					[
+						{
+							text: 'Corregir',
+							onPress: () =>
+								this.setState({
+									nombre: '',
+								}),
+						},
+					],
+					{ cancelable: true }
+				);
 
 				return;
 			}
@@ -121,6 +127,68 @@ export default class Registro extends Component {
 				aiVisible: true,
 				btnVisible: false,
 			});
+
+			/*
+            Crear un nuevo documento
+            en la colección usuarios
+            */
+			try {
+				/**
+				 * Creamos un usuario desde el servicio de auth de Firebase
+				 */
+				const usuarioFirebase = await firebase.auth.createUserWithEmailAndPassword(
+					this.state.email,
+					this.state.pin
+				);
+
+				/**
+				 * Enviamos un correo electrónico
+				 * para validar la existencia de la cuenta
+				 */
+				await usuarioFirebase.user
+					.sendEmailVerification()
+					.then(() => {
+						Alert.alert(
+							'Usuario registrado',
+							`${usuarioFirebase.user.uid}\nTe enviamos un correo para validar tu cuenta`,
+							[
+								{
+									text: 'Continuar',
+									onPress: () => {
+										this.setState({
+											aiVisible: false,
+											btnVisible: true,
+										});
+									},
+								},
+							]
+						);
+					});
+
+				//console.log(usuarioFirebase.user);
+
+				const docUsuario = await firebase.db
+					.collection('usuarios')
+					.add({
+						authId: usuarioFirebase.user.uid,
+						nombre: this.state.nombre,
+						apellido1: this.state.apellido1,
+						apellido2: this.state.apellido2,
+					});
+			} catch (e) {
+				console.log(e.toString());
+				Alert.alert('ERROR', get_error(e.code), [
+					{
+						text: 'Corregir',
+						onPress: () => {
+							this.setState({
+								aiVisible: false,
+								btnVisible: true,
+							});
+						},
+					},
+				]);
+			}
 		};
 
 		return (
@@ -188,6 +256,28 @@ export default class Registro extends Component {
 						/>
 					</View>
 				</View>
+
+				<TextInput
+					style={estilos.input}
+					placeholder='Correo electrónico'
+					keyboardType='email-address'
+					value={this.state.email}
+					autoCapitalize='none'
+					onChangeText={(val) => {
+						this.setState({ email: val });
+					}}
+				/>
+
+				<TextInput
+					style={estilos.input}
+					placeholder='Pin (6 dígitos)'
+					keyboardType='numeric'
+					maxLength={6}
+					value={this.state.pin}
+					onChangeText={(val) => {
+						this.setState({ pin: val });
+					}}
+				/>
 
 				<ActivityIndicator
 					size='large'

@@ -8,7 +8,9 @@ import {
 	TextInput,
 	View,
 } from 'react-native';
+import firebase from './../database/firebase';
 import estilos from '../styles/estilos';
+import get_error from '../helpers/errores_es_mx';
 
 /** Todos los componentes de React reciben como parámetro de inicio
  * las porpiedades indicadas por la instancia anterior
@@ -24,7 +26,9 @@ const Login = (props) => {
     Para usar un estado utilizamo la libreria useState de React
     const [valor, setValor] = useState(_VALOR_INCIAL_);
     */
-	const [telefono, setTelefono] = useState('4422048329');
+	const [telefono, setTelefono] = useState(
+		'raul.zavaletazea@gmail.com'
+	);
 	const [pin, setPin] = useState('123456');
 	/**
 	 * States para mostrar/ociultar spinner
@@ -40,9 +44,9 @@ const Login = (props) => {
 	/**
 	 * Funcion que valida el formulario
 	 */
-	const validaLogin = () => {
+	const validaLogin = async () => {
 		//Validamos telefono (10 dígitos)
-		if (telefono.length !== 10) {
+		if (telefono.length < 5) {
 			Alert.alert(
 				'ERROR',
 				'Teléfono incorrecto',
@@ -87,14 +91,49 @@ const Login = (props) => {
 		setBtnVisible(false);
 		setTiHab(false);
 
+		try {
+			const usuarioFirebase = await firebase.auth.signInWithEmailAndPassword(
+				telefono,
+				pin
+			);
+
+			let mensaje = `Bienvenido ${usuarioFirebase.user.email}\n`;
+			mensaje += usuarioFirebase.user.emailVerified
+				? '***Usuario verificado***'
+				: 'xxx Por favor valida tu cuenta xxx';
+
+			Alert.alert('Hola de nuevo', mensaje, [
+				{
+					text: 'Ingresar',
+					onPress: () => {
+						setAiVisible(false);
+						setBtnVisible(true);
+						setTiHab(true);
+						props.navigation.navigate('Home');
+					},
+				},
+			]);
+		} catch (e) {
+			Alert.alert('ERROR', get_error(e.code), [
+				{
+					text: 'Corregir',
+					onPress: () => {
+						setAiVisible(false);
+						setBtnVisible(true);
+						setTiHab(true);
+					},
+				},
+			]);
+		}
+
 		//Despues de 1.5 segundos, habilitar todo
 		//y direccionamos a home
-		setTimeout(() => {
-			setAiVisible(false);
-			setBtnVisible(true);
-			setTiHab(true);
-			props.navigation.navigate('Home');
-		}, 500);
+		// setTimeout(() => {
+		// 	setAiVisible(false);
+		// 	setBtnVisible(true);
+		// 	setTiHab(true);
+		// 	props.navigation.navigate('Home');
+		// }, 500);
 	};
 
 	const ejemploAlert = () => {
@@ -145,9 +184,9 @@ const Login = (props) => {
 			</Text>
 
 			<TextInput
-				placeholder='Teléfono'
-				keyboardType='phone-pad'
-				maxLength={10}
+				placeholder='E-mail'
+				keyboardType='email-address'
+				maxLength={70}
 				style={estilos.input}
 				onChangeText={(val) => setTelefono(val)}
 				value={telefono}
