@@ -27,7 +27,7 @@ const Login = (props) => {
     const [valor, setValor] = useState(_VALOR_INCIAL_);
     */
 	const [telefono, setTelefono] = useState(
-		'raul.zavaletazea@gmail.com'
+		'raul.zavaletazea@uteq.edu.mx'
 	);
 	const [pin, setPin] = useState('123456');
 	/**

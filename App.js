@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Login from './src/screens/Login';
 import Inicio from './src/screens/Inicio';
@@ -19,6 +19,7 @@ import { NavigationContainer } from '@react-navigation/native';
 //2.-
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './src/screens/private/Home';
+import { LogBox } from 'react-native';
 
 //2.1.-
 const Stack = createStackNavigator();

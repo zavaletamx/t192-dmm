@@ -1,8 +1,12 @@
 import { useFocusEffect } from '@react-navigation/core';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, Text, View } from 'react-native';
+import Snackbar from 'react-native-snackbar-component';
+import firebase from './../../database/firebase';
 
 const Inicio = (props) => {
+	const [snack, setSnack] = useState(false);
+
 	/*
     Efecto qu actualice el título del Stack Navigator  
     desde los componentes Drawer Hijos
@@ -15,10 +19,38 @@ const Inicio = (props) => {
 		});
 	});
 
+	/* Creamos un efecto (solo se ejecute al inicio)
+    que nos permite ir por los datos del usuario 
+    que ha iniciado sesión */
+	useEffect(() => {
+		/*
+        Verificamos si tenemos info de algún usuario de manera
+        local
+        */
+		const usuarioFirebase = firebase.auth.currentUser;
+
+		/*
+        Revisamos si el usuario no está validado
+        */
+		if (!usuarioFirebase.emailVerified) {
+			setSnack(true);
+		}
+	}, []);
+
 	return (
-		<View>
-			<Text>Inicio.js</Text>
-		</View>
+		<SafeAreaView style={{ flex: 1 }}>
+			<Snackbar
+				visible={snack}
+				textMessage='Hola Snack'
+				backgroundColor='#dc3545'
+				textMessage='Cuenta sin verificar'
+				actionText='Ok'
+				actionHandler={() => {
+					setSnack(false);
+				}}
+			/>
+			<Text>En inicio</Text>
+		</SafeAreaView>
 	);
 };
 
