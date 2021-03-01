@@ -26,13 +26,30 @@ const Stack = createStackNavigator();
 
 export default function App() {
 	/**
+	 * Hook al inicio que indique para toda la app
+	 * aue no se muestre mas el m ensaje de warning para 'NativeDriver'
+	 */
+	useEffect(() => {
+		/**
+		 * Inidicamos los tipos de arning que queremos  dejar de visualizar
+		 */
+		//TODOS
+		//LogBox.ignoreAllLogs();
+		//Solo algunos warning (Arreglo de los warnings a dejar de mostrar)
+		LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+	}, []);
+
+	/**
 	 * Creamos en App.js un enrutador de las pantallas navegables
 	 * de la app por medio d eun Screen
 	 *
 	 */
 	return (
 		<NavigationContainer>
-			<Stack.Navigator initialRouteName='Inicio'>
+			<Stack.Navigator
+				initialRouteName='Inicio'
+				headerMode='float'
+			>
 				{/** 3.- Indicamos todas las Screens relacionadas */}
 
 				<Stack.Screen
