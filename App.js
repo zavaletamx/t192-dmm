@@ -36,7 +36,10 @@ export default function App() {
 		//TODOS
 		//LogBox.ignoreAllLogs();
 		//Solo algunos warning (Arreglo de los warnings a dejar de mostrar)
-		LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+		LogBox.ignoreLogs([
+			'Animated: `useNativeDriver`',
+			'Setting a timer for a long period of time',
+		]);
 	}, []);
 
 	/**
