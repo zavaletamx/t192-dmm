@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
+	Button,
 	ImageBackground,
 	SafeAreaView,
-	ScrollView,
 	Text,
-	View,
 	TextInput,
-	Button,
+	TouchableOpacity,
+	View,
+	ScrollView,
+	Platform,
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from './../../../database/firebase';
 import estilos from './../../../styles/estilos';
 import ProgressDialog from '../../../components/ProgressDialog';
 import Snack from 'react-native-snackbar-component';
+import AppModal from '../../../components/AppModal';
+import * as ImagePicker from 'expo-image-picker';
 
 const MisDatos = (props) => {
 	const [usuarioFirebase, setUsuarioFirebase] = useState(
@@ -23,6 +26,7 @@ const MisDatos = (props) => {
 	const [loading, setLoading] = useState(true);
 	const [snackUpdate, setSnackUpdate] = useState(false);
 	const [snackError, setSnackError] = useState(false);
+	const [modalImg, setModalImg] = useState(false);
 
 	/**
 	 * Creamos un hook que nos permita conectar al cargarse el screen
@@ -86,6 +90,46 @@ const MisDatos = (props) => {
 		}
 	};
 
+	/**
+	 * Creamos una constante para tomar una imagen desde
+	 * la galería
+	 * (Image Gallery - Android)
+	 * (Camera Roll - iOS)
+	 *
+	 * 0.- Importar librería ImagePicker y todos sus componentes
+	 * 1.- Pedir permiso para acceder a la mutimedia
+	 * 2.- Indicar el tipo de multimedia que necesitamos (photo/video/all)
+	 * 3.- Indicar si se podrá editar la imagen
+	 * 4.- Indicar la relación de aspecto
+	 */
+	const getImagenGaleria = async () => {
+		/**
+		 * Preguntamos por el permiso para acceder a
+		 * los elementos multimedia de la galería
+		 */
+		const {
+			status,
+		} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		/**
+		 * Si el usuario nos da permiso de ingresar a su galería
+		 * Mostramos todas sus fotos y esperamos que seleccione una
+		 */
+		if (status === 'granted') {
+			const imgGaleria = await ImagePicker.launchImageLibraryAsync(
+				{
+					mediaTypes:
+						ImagePicker.MediaTypeOptions.Images,
+					allowsEditing: true,
+					aspect: [4, 4],
+					quality: 1,
+				}
+			);
+
+			console.log(imgGaleria);
+		}
+	};
+
 	return (
 		/**
 		 * SafeAreaView calcula el espacio donde el texto
@@ -112,6 +156,64 @@ const MisDatos = (props) => {
 				visible={snackError}
 			/>
 
+			{modalImg ? (
+				<AppModal
+					show={modalImg}
+					layerBgColor='#333'
+					layerBgOpacity={0.5}
+					modalBgColor='#fff'
+					modalOpacity={1}
+					modalContent={
+						<View>
+							<Text
+								style={{
+									alignSelf: 'center',
+									marginBottom: 20,
+									fontSize: 20,
+									fontWeight: '500',
+								}}
+							>
+								<FontAwesome5
+									name='camera-retro'
+									size={20}
+								/>{' '}
+								Actualizar foto de perfíl
+							</Text>
+							<Button title='Tomar foto' />
+
+							{Platform.OS === 'android' ? (
+								<View
+									style={{
+										marginVertical: 10,
+									}}
+								/>
+							) : null}
+
+							<Button
+								title='Galería'
+								onPress={getImagenGaleria}
+							/>
+
+							{Platform.OS === 'android' ? (
+								<View
+									style={{
+										marginVertical: 10,
+									}}
+								/>
+							) : null}
+
+							<Button
+								title='Cancelar'
+								color='red'
+								onPress={() =>
+									setModalImg(false)
+								}
+							/>
+						</View>
+					}
+				/>
+			) : null}
+
 			{/**
 			 * Si loading es verdadero, mostramos la modal
 			 */}
@@ -119,7 +221,9 @@ const MisDatos = (props) => {
 			{loading ? <ProgressDialog /> : null}
 
 			<ScrollView>
-				<TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => setModalImg(true)}
+				>
 					<ImageBackground
 						source={require('./../../../../assets/images/image_placeholder.png')}
 						style={{
