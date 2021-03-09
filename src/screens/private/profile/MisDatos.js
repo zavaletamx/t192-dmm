@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	View,
 	ScrollView,
-	Platform,
+	Alert,
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import firebase from './../../../database/firebase';
@@ -17,6 +17,7 @@ import ProgressDialog from '../../../components/ProgressDialog';
 import Snack from 'react-native-snackbar-component';
 import AppModal from '../../../components/AppModal';
 import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
 
 const MisDatos = (props) => {
 	const [usuarioFirebase, setUsuarioFirebase] = useState(
@@ -126,7 +127,148 @@ const MisDatos = (props) => {
 				}
 			);
 
-			console.log(imgGaleria);
+			/* agregar la url de la imgen al state docUsuario */
+			setDocUsuario({
+				...docUsuario,
+				['avatar']: imgGaleria.uri,
+			});
+
+			/**
+			 * Ocultar modal de selección de fotos
+			 */
+			setModalImg(false);
+
+			/**
+			 * Mostramos loader
+			 */
+			setLoading(true);
+
+			/**
+			 * Subir la foto a firebase storage
+			 * NOTA: asegurate de implementar storage desde el archivo firebase.js
+			 *
+			 * Para subir archivos a firebase es necesario crear un objeto Blob dentro
+			 * de un elemento File
+			 */
+			const blob = await (
+				await fetch(imgGaleria.uri)
+			).blob();
+
+			/**
+			 * File tiene tres parámetris
+			 * 1.- contenido binario
+			 * 2.- nombre del archivo
+			 * 3.- config del archivo (tipo de archivo)
+			 */
+			const file = new File(
+				[blob],
+				`${docUsuario.id}.jpg`,
+				{ type: 'image/jpeg' }
+			);
+
+			blob.close();
+
+			/**
+			 * Con el archivo creado, podemos subirlo al storage
+			 *
+			 * Acerce de firebase Storage
+			 *
+			 * la referencia a storage se posiciona en la raíz del contenedor
+			 *
+			 * ref() --------- referencia al contenedor (bucket)
+			 * child() ------- referencia a un componente dentro de
+			 *                 la referencia del contenedor
+			 * put() --------- Crea un nuevo archivo a partrio de un blob/file
+			 */
+			try {
+				const subida = await firebase.storage
+					.ref()
+					.child('images')
+					.child(file.name)
+					.put(file, { contentType: file.type });
+
+				/** si la subida es exitosa */
+				if (subida.state === 'success') {
+					/** Solicitar la url de la imagen */
+					const urlAvatar = await subida.ref.getDownloadURL();
+
+					/* actualizamos los datos de la colección para agregar la imagen 
+                    al documento del usuario */
+					await firebase.db
+						.collection('usuarios')
+						.doc(docUsuario.id)
+						.update({ avatar: urlAvatar });
+
+					/* Snack que indique los cambios */
+					setLoading(false);
+					setSnackUpdate(true);
+				}
+			} catch (e) {
+				setLoading(false);
+				setSnackError(true);
+				console.log(e.toString());
+			}
+		}
+	};
+
+	/**
+	 * Funcion para tomarnos una foto
+	 */
+	const getFotoCamara = async () => {
+		/**
+		 * Para usar la camara necesitamos dos permisos
+		 * 1.- Acceso a la camara
+		 * 2.- Acceso a lagalería del dispositivo
+		 */
+		const permisoCamara = await Permissions.askAsync(
+			Permissions.CAMERA
+		);
+
+		const permisoGaleria = await Permissions.askAsync(
+			Permissions.MEDIA_LIBRARY
+		);
+
+		/**
+		 * Si obtenemos los permisos
+		 */
+		if (
+			permisoCamara.status === 'granted' &&
+			permisoGaleria.status === 'granted'
+		) {
+			/**
+			 * --Mismo procedimiento que tomar imagen de la galeria
+			 */
+			const imgCamara = await ImagePicker.launchCameraAsync(
+				{
+					mediaTypes:
+						ImagePicker.MediaTypeOptions.Images,
+					allowsEditing: true,
+					aspect: [4, 4],
+					quality: 1,
+				}
+			);
+
+			/**
+			 * Mostrar la imagen seleccionada en el perfil
+			 */
+			setDocUsuario({
+				...docUsuario,
+				['avatar']: imgCamara.uri,
+			});
+
+			setModalImg(false);
+		} else {
+			/* si nos dieron permiso */
+			Alert.alert(
+				'ERROR',
+				'para continuar permite el uso de la camara y tu galería',
+				[
+					{
+						text: 'Continuar',
+						onPress: () => setModalImg(false),
+					},
+				]
+			);
 		}
 	};
 
@@ -179,7 +321,10 @@ const MisDatos = (props) => {
 								/>{' '}
 								Actualizar foto de perfíl
 							</Text>
-							<Button title='Tomar foto' />
+							<Button
+								title='Tomar foto'
+								onPress={getFotoCamara}
+							/>
 
 							{Platform.OS === 'android' ? (
 								<View
@@ -225,7 +370,16 @@ const MisDatos = (props) => {
 					onPress={() => setModalImg(true)}
 				>
 					<ImageBackground
-						source={require('./../../../../assets/images/image_placeholder.png')}
+						/** Evaluamos si el usuario tiene una imgen de perfil guardada
+						 * en su doc de firestore de lo contrario mostramos la imgen
+						 * defecto de perfil
+						 */
+						source={
+							typeof docUsuario.avatar !==
+							'undefined'
+								? { uri: docUsuario.avatar }
+								: require('./../../../../assets/images/image_placeholder.png')
+						}
 						style={{
 							width: 200,
 							height: 200,
