@@ -129,6 +129,36 @@ const Sidebar = (props) => {
 						);
 					}}
 				/>
+
+				<DrawerItem
+					icon={() => (
+						<MaterialIcons
+							name='location-on'
+							size={20}
+							color='#000'
+						/>
+					)}
+					label='Geolocalización'
+					onPress={() =>
+						props.navigation.navigate('Geoloc')
+					}
+				/>
+
+				<DrawerItem
+					icon={() => (
+						<MaterialIcons
+							name='notifications-active'
+							size={20}
+							color='#000'
+						/>
+					)}
+					label='Notificaciones'
+					onPress={() =>
+						props.navigation.navigate(
+							'Notificaciones'
+						)
+					}
+				/>
 			</DrawerContentScrollView>
 		</View>
 	);

@@ -6,7 +6,6 @@
 4.- hosting
 */
 import firebase from 'firebase';
-import 'firebase/firestore';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyCWQqhdtFprhg_IZcTab6CtVJzOD2kdkO8',

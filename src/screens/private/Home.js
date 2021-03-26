@@ -13,9 +13,10 @@ import Perfil from './Perfil';
 import Catalogo from './Catalogo';
 import Rentas from './Rentas';
 import Sidebar from './../../components/Sidebar';
-import CerrarSesion from './CerrarSesion';
+import Geoloc from './Geoloc';
 
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import Notificaciones from './Notificaciones';
 
 /*
 Para crear un Drawer necesitamos una constante 
@@ -149,6 +150,16 @@ const Home = (props) => {
 			<Drawer.Screen
 				name='Rentas'
 				component={Rentas}
+			/>
+
+			<Drawer.Screen
+				name='Geoloc'
+				component={Geoloc}
+			/>
+
+			<Drawer.Screen
+				name='Notificaciones'
+				component={Notificaciones}
 			/>
 		</Drawer.Navigator>
 	);
