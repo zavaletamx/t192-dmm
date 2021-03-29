@@ -15,6 +15,7 @@ desde react-native-maps
 import MapView, {
 	Marker,
 	Callout,
+	PROVIDER_GOOGLE,
 } from 'react-native-maps';
 
 import { MaterialIcons } from '@expo/vector-icons';
@@ -65,7 +66,7 @@ const Geoloc = (props) => {
 			</Text>
 		),
 		direccion:
-			'Av. Marmota, Col. La Paredera\nC.P. 76269, El Marqués, Querétaro, México',
+			'Av. Pie de la Cuesta\nC.P. 23100, Acapulco, Guerrero, México',
 	});
 
 	/*
@@ -94,22 +95,58 @@ const Geoloc = (props) => {
 					}
 				);
 
-				console.log(JSON.stringify(location));
-				setHome({
-					ubicacion: {
-						latitud: location.coords.latitude,
-						longitud: location.coords.longitude,
-					},
-				});
-				setProgress(false);
+				/* Usamos una promesa para buscar las direcciones
+                mas cercanas a las coordenadas geográficas enviadas
 
-				/* movemos el mapa a nuestra nueva ubicación */
-				mapa.animateToRegion({
+                Invocamos al metodo reverseGeocodeAsync
+                coordenadas ------ dirección
+                direccion -------- coordenadas
+                */
+				Location.reverseGeocodeAsync({
 					latitude: location.coords.latitude,
 					longitude: location.coords.longitude,
-					latitudeDelta: 0.02,
-					longitudeDelta: 0.02,
-				});
+				})
+					.then((address) => {
+						//Tonar la primera direccion
+						const direccion = address[0];
+						console.log(direccion);
+
+						setHome({
+							ubicacion: {
+								latitud:
+									location.coords
+										.latitude,
+								longitud:
+									location.coords
+										.longitude,
+							},
+							nombre: (
+								<Text>
+									<MaterialIcons
+										name='home'
+										size={18}
+										color='#000'
+									/>{' '}
+									Casa
+								</Text>
+							),
+							direccion: `${direccion.street}, ${direccion.city}\nC.P. ${direccion.postalCode}, ${direccion.subregion}, ${direccion.region}. ${direccion.country}`,
+						});
+						setProgress(false);
+
+						/* movemos el mapa a nuestra nueva ubicación */
+						mapa.animateToRegion({
+							latitude:
+								location.coords.latitude,
+							longitude:
+								location.coords.longitude,
+							latitudeDelta: 0.02,
+							longitudeDelta: 0.02,
+						});
+					})
+					.catch((e) =>
+						console.log(e.toString())
+					);
 			} else {
 				setProgress(false);
 				Alert.alert(
@@ -152,17 +189,45 @@ const Geoloc = (props) => {
             los valores delta van desde 1 hasta 0, siendo 1 
             lo mas alejado posible y 0 lo mas cercano
             */}
+			<TouchableOpacity
+				onPress={getUbicacion}
+				style={{
+					flex: 2,
+					backgroundColor: '#000',
+					paddingHorizontal: 20,
+					paddingVertical: 10,
+				}}
+			>
+				<Text>
+					<MaterialIcons
+						name='location-searching'
+						color='#fff'
+						size={22}
+					/>
+				</Text>
+			</TouchableOpacity>
+
+			<View
+				style={{
+					flex: 2,
+					alignItems: 'center',
+					justifyContent: 'center',
+				}}
+			>
+				<Text style={{ fontSize: 18 }}>
+					{home.direccion}
+				</Text>
+			</View>
+
 			<MapView
 				/* Creamos una referencia del mapa para poder utilizarlo
                 fuera de MapView*/
+				provider={PROVIDER_GOOGLE}
 				ref={(map) => setMapa(map)}
 				showsUserLocation
 				followsUserLocation
 				style={{
-					flex: 1,
-					overflow: 'hidden',
-					position: 'relative',
-					zIndex: 1,
+					flex: 8,
 				}}
 				initialRegion={{
 					latitude: home.ubicacion.latitud,
@@ -219,23 +284,6 @@ const Geoloc = (props) => {
 					</Marker>
 				))}
 			</MapView>
-
-			<TouchableOpacity
-				onPress={getUbicacion}
-				style={{
-					backgroundColor: '#000',
-					paddingHorizontal: 20,
-					paddingVertical: 10,
-					borderRadius: 10,
-					overflow: 'hidden',
-				}}
-			>
-				<MaterialIcons
-					name='location-searching'
-					color='#fff'
-					size={22}
-				/>
-			</TouchableOpacity>
 		</SafeAreaView>
 	);
 };

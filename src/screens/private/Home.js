@@ -1,8 +1,13 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, {
+	useEffect,
+	useLayoutEffect,
+	useState,
+} from 'react';
 import {
 	Alert,
 	BackHandler,
 	TouchableOpacity,
+	Dimensions,
 } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -26,6 +31,8 @@ contenido de Screens
 const Drawer = createDrawerNavigator();
 
 const Home = (props) => {
+	const [drawerType, setDrawerType] = useState('front');
+
 	//Alerta que confirma la acción de "salir"
 	const backAction = () => {
 		Alert.alert(
@@ -75,23 +82,33 @@ const Home = (props) => {
 	//Este efecto solo se ejecutará la primera vez que se carga
 	//el componente Home
 	useLayoutEffect(() => {
+		/*
+        Si el ancho total de la pantalla del 
+        dispositivo es igual o superior a 720 entonces
+        cambiamos el drawer a permanent
+        */
+		if (Dimensions.get('window').width >= 720) {
+			setDrawerType('permanent');
+		}
+
 		props.navigation.setOptions({
-			headerLeft: () => (
-				<TouchableOpacity
-					style={{
-						paddingLeft: 10,
-						paddingVertical: 10,
-						paddingRight: 30,
-					}}
-					onPress={() => {
-						props.navigation.dispatch(
-							DrawerActions.toggleDrawer()
-						);
-					}}
-				>
-					<Entypo name='menu' size={25} />
-				</TouchableOpacity>
-			),
+			headerLeft: () =>
+				drawerType === 'front' ? (
+					<TouchableOpacity
+						style={{
+							paddingLeft: 10,
+							paddingVertical: 10,
+							paddingRight: 30,
+						}}
+						onPress={() => {
+							props.navigation.dispatch(
+								DrawerActions.toggleDrawer()
+							);
+						}}
+					>
+						<Entypo name='menu' size={25} />
+					</TouchableOpacity>
+				) : null,
 			headerRight: () => (
 				<TouchableOpacity
 					style={{
@@ -125,7 +142,7 @@ const Home = (props) => {
 		/** Creamos un contenedor de los items del Drawer */
 		<Drawer.Navigator
 			initialRouteName='Inicio'
-			drawerType='front'
+			drawerType={drawerType}
 			openByDefault={false}
 			drawerContent={() => <Sidebar {...props} />}
 		>
