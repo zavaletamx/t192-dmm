@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	Alert,
+	Button,
 	Platform,
 	SafeAreaView,
 	Text,
+	TextInput,
 } from 'react-native';
 
 /*
@@ -14,6 +16,8 @@ EN DISPOSITIVOS FÍSICOS (NO FUNCIONA EN EMULADORES/SIMULADORES)
 */
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+
+import styles from './../../styles/estilos';
 
 /* 
 Implementar un handler (metodo que indique que hacer [interface])
@@ -48,6 +52,10 @@ const Notificaciones = (props) => {
 	const [notification, setNotification] = useState(false);
 	const notificationListener = useRef(); //recibir
 	const responseListener = useRef(); //enviar
+
+	const [titulo, setTitulo] = useState('');
+	const [token, setToken] = useState('');
+	const [mensaje, setMensaje] = useState('');
 
 	/*
     Metodo que pida el permiso de enviar/recibir notificaciones
@@ -111,8 +119,53 @@ const Notificaciones = (props) => {
 		return token;
 	};
 
+	/*
+    Creamos una AF que nos pormite enciar una notificacion push al token indicado
+    */
+	const sendPushNotification = async (token) => {
+		/*
+        Para enviar una notificacion por medio del servicio web 
+        necesitamos empaquetar los datos del mensaje en una constante 
+        con las siguientes claves:
+
+        to --------- Token del receptor de la notificacion
+        sound ------ Si la notificacion emitirá una alerta auditiva
+        title ------ Titulo de la notificación
+        body ------- Mensaje de la notificación
+        data ------- Valores adicionales de la notificación
+
+        URL del servicio: https://exp.host/--/api/v2/push/send
+        */
+		const message = {
+			to: token,
+			sound: 'default',
+			title: titulo,
+			body: mensaje,
+			data: {
+				autor: 'RZZ',
+				autorEmail: 'raul.zavaletazea@gmail.com',
+			},
+		};
+
+		/*
+        Invocamos al servicio
+        */
+		await fetch(
+			'https://exp.host/--/api/v2/push/send',
+			{
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Accept-encoding': 'gzip, deflate',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(message),
+			}
+		);
+	};
+
 	/*Creamos una función que no está enganchada y solo se ejecuta 
-    una vez, pero en el moento en el que esta Screen deje de ser 
+    una vez, pero en el momento en el que esta Screen deje de ser 
     el foco principal, enviamos las notificaciones a segundo plano
     */
 	useEffect(() => {
@@ -129,10 +182,49 @@ const Notificaciones = (props) => {
 				notificationListener
 			);
 	}, []);
+
 	return (
-		<SafeAreaView>
+		<SafeAreaView style={{ margin: 20 }}>
 			<Text>Notificaciones.js</Text>
 			<Text>{expoPushToken}</Text>
+
+			<TextInput
+				placeholder='Expo Token'
+				keyboardType='default'
+				style={styles.input}
+				value={token}
+				onChangeText={(val) => {
+					setToken(val);
+				}}
+			/>
+
+			<TextInput
+				placeholder='Titulo de la notificación'
+				keyboardType='default'
+				style={styles.input}
+				value={titulo}
+				onChangeText={(val) => {
+					setTitulo(val);
+				}}
+			/>
+
+			<TextInput
+				placeholder='Mensaje'
+				keyboardType='default'
+				style={styles.input}
+				value={mensaje}
+				onChangeText={(val) => {
+					setMensaje(val);
+				}}
+			/>
+
+			<Button
+				title='Enviar notificación'
+				onPress={() => {
+					sendPushNotification(token);
+				}}
+				color='black'
+			/>
 		</SafeAreaView>
 	);
 };
