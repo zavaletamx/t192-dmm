@@ -15,6 +15,10 @@
 			"fallbackToCacheTimeout": 0
 		},
 		"assetBundlePatterns": ["**/*"],
+		"facebookAutoInitEnabled": true,
+		"facebookScheme": "fb3933406030086481",
+		"facebookAppId": "3933406030086481",
+		"facebookDisplayName": "Demo DAPPS 92-93",
 		"ios": {
 			"supportsTablet": true,
 			"config": {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, Button, Text, View } from 'react-native';
 import firebase from './../database/firebase';
+import * as Facebook from 'expo-facebook';
 
 /** props es una referencia a las variables, const, obj, componentes, etc
  * que comparte el componente padre conmigo
@@ -62,6 +63,56 @@ const Inicio = (props) => {
 			<Button
 				title='Insertar en firestore'
 				onPress={crearUsuarioFS}
+			/>
+
+			<Button
+				title='Login Facebook'
+				onPress={async () => {
+					//ID de la App de facebook
+					const appId = '3933406030086481';
+
+					//Inincializamos el scope de Facebook
+					await Facebook.initializeAsync({
+						appId: appId,
+					});
+
+					//Dependiendo del estado de acceso tendremos un valor de type
+					const {
+						type,
+						token,
+					} = await Facebook.logInWithReadPermissionsAsync(
+						{
+							permissions: [
+								'public_profile',
+								'email',
+							],
+						}
+					);
+
+					if (type === 'success') {
+						await firebase
+							.auth()
+							.setPersistence(
+								firebase.auth.Auth
+									.Persistence.LOCAL
+							); // Set persistent auth state
+
+						// const credential = firebase
+						// 	.auth()
+						// 	.FacebookAuthProvider.credential(
+						// 		token
+						// 	);
+						// const facebookProfileData = await firebase
+						// 	.auth()
+						// 	.signInWithCredential(
+						// 		credential
+						// 	); // Sign in with Facebook credential
+
+						// console.log(
+						// 	facebookProfileData
+						// );
+					}
+				}}
 			/>
 		</View>
 	);
